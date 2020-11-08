@@ -1,44 +1,31 @@
-from pymongo import *
-from flask import Flask, request, render_template
-from flask import jsonify
-import json
-from bson import json_util
+from flask import Flask
 
+from backend.api import *
 app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 
-client = MongoClient()
-db = client['patients']
-collection = db['patient']
-post = {"author": "Dima",
-         "text": "Test pymongo",
-         "tags": ["mongodb", "python", "pymongo"]}
-collection.insert_one(post)
+app.url_map.strict_slashes = False
 
-@app.route('/')
-def hello_world():
-    docs_list = list(collection.find())
-    return render_template('table.html', rows = json.loads(json.dumps(docs_list, default=json_util.default)))
+app.register_blueprint(patients)
+app.register_blueprint(patients_add)
 
-@app.route('/person/<int:id>')
-def person(id):
-    user = {'username': 'Dmitry'}
-    return render_template('person.html', title='Card', user=user)
+app.register_blueprint(patient)
+app.register_blueprint(patient_delete)
 
-@app.route('/add')
-def add_to_db():
-    obj = {"author":request.args['author'], "text": request.args['text'],
-         "tags": request.args['tags'].split(",")}
-    collection.insert_one(obj)
-    docs_list = list(collection.find())
-    return json.loads(json.dumps(docs_list, default=json_util.default))
+app.register_blueprint(patient_contacts)
+app.register_blueprint(patient_diseases)
+app.register_blueprint(patient_symptoms)
 
-@app.route('/del')
-def del_from_db():
-    obj = request.args['author']
-    myquery = {"author": obj}
-    collection.delete_one(myquery)
-    docs_list = list(collection.find())
-    return json.dumps(docs_list, default=json_util.default)
+app.register_blueprint(patient_contacts_put)
+app.register_blueprint(patient_diseases_put)
+app.register_blueprint(patient_symptoms_put)
+
+app.register_blueprint(patient_contacts_delete)
+app.register_blueprint(patient_diseases_delete)
+app.register_blueprint(patient_symptoms_delete)
+
+app.register_blueprint(patient_symptoms_edit)
+app.register_blueprint(patient_diseases_edit)
+app.register_blueprint(patient_contacts_edit)
 
 if __name__ == '__main__':
     app.run()
