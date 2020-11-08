@@ -1,10 +1,14 @@
 import json
+import os
 from datetime import datetime
 from bson import json_util
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, url_for, render_template
 from pymongo import *
+from werkzeug.utils import redirect, secure_filename
+
 from backend.db import *
 from backend.entities import Disease, Patient
+from flask import send_file, send_from_directory, safe_join, abort
 
 patients = Blueprint(name='patients', import_name=__name__)
 
@@ -29,11 +33,35 @@ patient_contacts_edit = Blueprint(name='patient_contacts_edit', import_name=__na
 patient_diseases_edit = Blueprint(name='patient_diseases_edit', import_name=__name__)
 patient_symptoms_edit = Blueprint(name='patient_symptoms_edit', import_name=__name__)
 
+export = Blueprint(name='export', import_name=__name__)
+imprt = Blueprint(name='import', import_name=__name__)
+
+
+@export.route('/export', methods=['POST', 'GET'])
+def export_json():
+    json_f = {"patient": json.loads(json.dumps(list(collection.find({}, {"_id": 0})), default=json_util.default))}
+    with open('json/data.json', 'w+', encoding='utf-8') as f:
+        json.dump(json_f, f, ensure_ascii=False)
+    return send_from_directory('./', 'json/data.json', as_attachment=True)
+
+
+@imprt.route('/import', methods=['POST', 'GET'])
+def import_json():
+    if request.method == 'GET':
+        return render_template('patient.html')
+    file = request.files.get('file', None)
+    file.save(os.path.join('./json/', file.filename))
+    with open('./json/'+file.filename) as f:
+        data = json.load(f)['patient']
+    for tmp in data:
+        print(tmp)
+    return render_template('patient.html')
+
 
 @patients.route('/patients', methods=['GET'])
 def get_patients():
-    docs_list = list(collection.find({}))
-    return {"patient": json.loads(json.dumps(docs_list, default=json_util.default))}
+    patients = list(collection.find({}))
+    return {"patient": json.loads(json.dumps(patients, default=json_util.default))}
 
 
 @patient.route('/patient/<phone>', methods=['GET'])

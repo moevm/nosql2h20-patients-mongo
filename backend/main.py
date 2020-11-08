@@ -26,6 +26,9 @@ app.register_blueprint(patient_symptoms_delete)
 app.register_blueprint(patient_symptoms_edit)
 app.register_blueprint(patient_diseases_edit)
 app.register_blueprint(patient_contacts_edit)
+app.register_blueprint(export)
+app.register_blueprint(imprt)
+
 
 if __name__ == '__main__':
     app.run()
