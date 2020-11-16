@@ -1,0 +1,32 @@
+<!doctype html>
+<html class="no-js" lang="">
+<meta charset="utf-8">
+
+<head>
+  <title>Diseases</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/table.css') }}"/>
+</head>
+
+<body>
+  <div class="wrapper" style="display: flex; justify-content: center; height: 100vh; align-items: center; flex-direction: column;">
+  <table>
+     <tbody>
+        {%for disease in diseases['diseases']%}
+        <tr onclick="location.href='{{ url_for('disease_edit', phone_number = phone_number,  index = loop.index-1) }}';">
+            <td>{{ disease}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+	<div style="display: flex;padding-top:10px">
+	
+	<div style="padding:10px">
+		<button onclick="location.href='{{ url_for('card_patient', phone_number=phone_number) }}';">Back</button>
+		<button onclick="location.href='{{ url_for('add_disease', phone_number=phone_number) }}';">Add</button>
+
+	</div>
+  </div>
+
+</body>

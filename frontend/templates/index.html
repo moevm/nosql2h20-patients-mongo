@@ -1,0 +1,78 @@
+﻿
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>Зараженные</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/normalize.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="firstColumn column">
+    <div class="stat">
+      <a href="http://localhost:8080/statistic">Статистика</a>
+    </div>
+	<form action="" method="post">
+    		<div class="search" method="get">
+      		<input type="text" placeholder="Поиск" name="input_search" action="">
+      		<select id="searcher" name="searcher" method="post">
+			<option value = "none">None</option>
+        		<option value = "name">Name</option>
+        		<option value = "country">Country</option>
+        		<option value = "city">City</option>
+        		<option value = "phone">Phone</option>
+      		</select>
+	</form>
+      	<button onclick="location.href='http://localhost:8080/add';">Применить</button>
+    	</div>
+    <div class="filter">
+      <label for="filter">Фильтр</label>
+      <select id="filter">
+        <option>Ada</option>
+        <option>Grace</option>
+        <option>Marga</option>
+        <option>Joan</option>
+      </select>
+      <input type="text" placeholder="Введите значение">
+      <button>Применить</button>
+    </div>
+  </div>
+  <div class="secondColumn column">
+    <table>
+    <thead>
+        <tr>
+            <th>Phone</th>
+            <th>Name</th>
+            <th>Country</th>
+	    <th>City</th>
+            <th>Birth day</th>
+        <tr>
+    </thead>
+    <tbody>
+        {% for phone, name, country, city, birthday in people %}
+        <tr onclick="location.href='{{ url_for('card_patient', phone_number=phone) }}';">
+            <td>{{ phone }}</td>
+            <td>{{ name }}</td>
+            <td>{{ country }}</td>
+	    <td>{{ city }}</td>
+            <td>{{ birthday }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    <div class="buttons">
+      <button onclick="location.href='http://127.0.0.1:8080/add'">Добавить человека</button>
+      <button onclick="move_forward()">Экспорт</button>
+      <button>Импорт</button>
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>

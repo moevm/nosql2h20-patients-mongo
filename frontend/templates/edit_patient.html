@@ -1,0 +1,27 @@
+<html>
+ <head>
+  <title>EDIT</title>
+ </head>
+ <body>
+
+ <form name="test" method="post" action=""}>
+  <p><b>phone:</b><br>
+   <input type="text" name="phone" size="40" value = {{patient['phone_number']}}>
+  </p>
+  <p><b>Name:</b><br>
+   <input type="text" name="name" size="40" value = {{patient['name']}}>
+  </p>
+   <p><b>Country:</b><br>
+   <input type="text" name="country" size="40" value = {{patient['country']}}>
+  </p>
+  <p><b>City:</b><br>
+   <input type="text" name="city" size="40" value = {{patient['city']}}>
+  </p>
+  <p><b>Birthday:</b><br>
+   <input type="text" name="birthday" size="40" value = {{patient['date_of_birth']['$date']}}>
+  </p>
+ <button onclick="location.href='http://localhost:5000/';"  method="get">Edit</button>
+ </form>
+<button onclick="location.href='http://localhost:5000/';">Back to menu</button>
+ </body>
+</html>

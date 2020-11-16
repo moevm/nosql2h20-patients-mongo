@@ -1,0 +1,29 @@
+<html>
+<head>
+	<title>ADD</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}" />
+	<meta http-equiv="Pragma" content="no-cache"/>
+</head>
+
+<body>
+	<div style="display: flex; justify-content: center;">
+                <img src="http://localhost:8080/chart/{{tmp}}/{{time}}" alt="Chart" method="post" height="auto" width="50%">
+		
+	</div>
+		<form action="" method="get">
+		<div class="filter" method="post" style="display: flex; justify-content: center;">
+      				<label for="filter">X</label>
+			
+                                        <select id="filter" method="get"  name="XX" style="width: 100px">
+        					<option value="Country">Country</option>
+        					<option value="City">City</option>
+        					<option>Last week</option>
+      					</select>
+	
+		</div>
+                    <button onclick="location.href='http://localhost:8080/statistic';">OK</button>
+		</form>
+
+	
+</body>
+</html>

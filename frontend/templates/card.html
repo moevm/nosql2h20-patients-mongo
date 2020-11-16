@@ -1,0 +1,46 @@
+<!doctype html>
+<html class="no-js" lang="">
+<meta charset="utf-8">
+
+<head>
+  <title>Patient card</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/table.css') }}" />
+</head>
+
+<body>
+  <div class="wrapper" style="display: flex; justify-content: center; height: 100vh; align-items: center; flex-direction: column;">
+  <table>
+    <tbody>
+        <tr>
+            <td>Phone</td> <td>{{ patient['phone_number']}}</td>
+	</tr>
+	<tr>
+            <td>Name</td> <td>{{ patient['name']}}</td>
+	</tr>
+	<tr>
+            <td>Country</td> <td>{{ patient['country']}}</td>
+	</tr>
+	<tr>
+	    <td>City</td> <td>{{ patient['city'] }}</td>
+	</tr>
+	<tr>
+            <td>Birthday</td> <td>{{ patient['date_of_birth']['$date'] }}</td>
+        </tr>
+    </tbody>
+    </table>
+	<div style="display: flex;padding-top:10px">
+	
+	<div style="padding:10px">
+		<button onclick="location.href='http://localhost:8080//card/{{patient['phone_number']}}/dynamic';">Dynamic</button>
+		<button onclick="location.href='http://localhost:8080/card//{{patient['phone_number']}}/diseases';">Diseases</button>
+	</div>
+	<div style="padding:10px">
+		<button onclick="location.href='http://localhost:8080//card/{{patient['phone_number']}}/contacts';">Contacts</button>
+		<button onclick="location.href='http://localhost:8080/card/{{patient['phone_number']}}/edit';">Edit</button>
+	</div>
+	</div>
+  </div>
+
+</body>
