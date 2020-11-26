@@ -1,15 +1,61 @@
 <html>
+
 <head>
    <title>Добавление пациента</title>
    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
 </head>
+
 <body>
+   <script>
+      function validateform() {
+         var phone = document.addPatient.phone.value;
+         var name = document.addPatient.name.value;
+         var country = document.addPatient.country.value;
+         var city = document.addPatient.city.value;
+         if (phone.length < 4) {
+            alert("Длина телефона не может быть менее 4 символов.");
+            return false;
+         }
+         if (name == null || name == "") {
+            alert("Имя не может быть пустым!");
+            return false;
+         }
+         if (validateString(name)) {
+            alert("Имя не может содеражать ничего кроме букв!");
+            return false;
+         }
+         if (country == null || country == "") {
+            alert("Название страны не может быть пустым!");
+            return false;
+         }
+         if (validateString(country)) {
+            alert("Название страны не может содеражать ничего кроме букв!");
+            return false;
+         }
+         if (city == null || city == "") {
+            alert("Название города не может быть пустым!");
+            return false;
+         }
+         if (validateString(city)) {
+            alert("Название города не может содеражать ничего кроме букв!");
+            return false;
+         }
+         return true;
+      }
+      function validateString(string) {
+         var re = /^[А-Яа-я]+$/;
+         if (re.test(string))
+            return true
+         else
+            return false;
+      }
+   </script>
    <header>
       <h1>
          Добавление пациента
       </h1>
    </header>
-   <form name="addPatient" method="post" action="">
+   <form name="addPatient" method="post" action="" onsubmit="validateform()">
       <input type="text" name="phone" size="40" placeholder="Телефон"><br>
       <input type="text" name="name" size="40" placeholder="ФИО"><br>
       <input type="text" name="country" size="40" placeholder="Страна"><br>
@@ -19,11 +65,12 @@
          <input class="list-item" type="date" id="start" name="birthday" value="2000-01-01" min="1900-01-01"
             max="2020-12-31"><br>
       </div>
-
+      <input class="list-item" type="submit" value="Add">
    </form>
    <div class="list">
-      <button class="list-item" onclick="location.href='http://localhost:8080/';">Add</button>
+      
       <button class="list-item" onclick="location.href='http://localhost:8080/';">Back to menu</button>
    </div>
 </body>
+
 </html>
