@@ -1,10 +1,14 @@
 import json
 from datetime import datetime
 from bson import json_util
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, url_for, render_template
 from pymongo import *
-from backend.db import *
-from backend.entities import Disease, Patient
+from werkzeug.utils import redirect
+
+from db import *
+from entities import Disease, Patient
+from flask import send_file, send_from_directory, safe_join, abort
+import os
 
 patients = Blueprint(name='patients', import_name=__name__)
 
@@ -24,10 +28,34 @@ patient_diseases_delete = Blueprint(name='patient_diseases_delete', import_name=
 patient_symptoms_delete = Blueprint(name='patient_symptoms_delete', import_name=__name__)
 
 patients_add = Blueprint(name='patients_add', import_name=__name__)
-
+patients_edit = Blueprint(name='patient_edit', import_name=__name__)
 patient_contacts_edit = Blueprint(name='patient_contacts_edit', import_name=__name__)
 patient_diseases_edit = Blueprint(name='patient_diseases_edit', import_name=__name__)
 patient_symptoms_edit = Blueprint(name='patient_symptoms_edit', import_name=__name__)
+
+export = Blueprint(name='export', import_name=__name__)
+imprt = Blueprint(name='import', import_name=__name__)
+
+
+@export.route('/export', methods=['POST', 'GET'])
+def export_json():
+    json_f = {"patient": json.loads(json.dumps(list(collection.find({}, {"_id": 0})), default=json_util.default))}
+    with open('json/data.json', 'w+', encoding='utf-8') as f:
+        json.dump(json_f, f, ensure_ascii=False)
+    return send_from_directory('./', 'json/data.json', as_attachment=True)
+
+
+@imprt.route('/import', methods=['POST', 'GET'])
+def import_json():
+    if request.method == 'GET':
+        return render_template('patient.html')
+    file = request.files.get('file', None)
+    file.save(os.path.join('./json/', file.filename))
+    with open('./json/' + file.filename) as f:
+        data = json.load(f)['patient']
+    for tmp in data:
+        print(tmp)
+    return render_template('patient.html')
 
 
 @patients.route('/patients', methods=['GET'])
@@ -148,10 +176,35 @@ def edit_patient_symptom(phone):
 @patients_add.route('/addPatient', methods=['POST'])
 def add_patient():
     req = request.form
-    patient = Patient(req['phone_number'], req['name'],
-                      date_of_birth=datetime.strptime(req['date'], '%Y-%m-%d'),
-                      country=req['country'], city=req['city'])
-    collection.insert_one(patient.__dict__)
+    if collection.count({'phone_number': req['phone_number']}) > 0:
+        return Response(status=302)
+    else:
+        patient = Patient(phone_number=req['phone_number'], name=req['name'],
+                          date_of_birth=datetime.strptime(req['date'], '%Y-%m-%d'),
+                          country=req['country'], city=req['city'])
+        print(patient.__dict__)
+        collection.insert_one(patient.__dict__)
+    return Response(status=200)
+
+
+@patients_edit.route('/editPatient/<phone>', methods=['POST'])
+def edit_patient(phone):
+    req = request.form
+    if collection.count({'phone_number': phone}) == 0:
+        return Response(status=302)
+    else:
+        print(datetime.strptime(req['$date'], '%Y-%m-%d'))
+        if collection.count({req['phone_number']}):
+            return Response(status=303)
+        collection.update_one({'phone_number': phone}, {
+            '$set': {
+                'phone_number': req['phone_number'],
+                'name': req['name'],
+                'country': req['country'],
+                'city': req['city'],
+                'date_of_birth': datetime.strptime(req['date_of_birth'], '%Y-%m-%d')
+            }
+        })
     return Response(status=200)
 
 
