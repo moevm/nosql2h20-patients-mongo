@@ -94,6 +94,10 @@
       patient = people[i];
       if (patient[ind].includes(searchTxt)) {
         var newRow = table.insertRow();
+        newRow.onclick = function(){
+          location.href='/card/'+patient[0];
+        }
+        newRow.style = "cursor: pointer;";
         for (var j = 0; j < 5; j++) {
 
           // Insert a cell at the end of the row
