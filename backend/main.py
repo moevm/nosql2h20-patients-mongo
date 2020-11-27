@@ -1,6 +1,6 @@
 from flask import Flask
 
-from backend.api import *
+from api import *
 app = Flask(__name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 
 app.url_map.strict_slashes = False
@@ -26,6 +26,9 @@ app.register_blueprint(patient_symptoms_delete)
 app.register_blueprint(patient_symptoms_edit)
 app.register_blueprint(patient_diseases_edit)
 app.register_blueprint(patient_contacts_edit)
+app.register_blueprint(patients_edit)
+app.register_blueprint(export)
+app.register_blueprint(imprt)
 
 if __name__ == '__main__':
     app.run()

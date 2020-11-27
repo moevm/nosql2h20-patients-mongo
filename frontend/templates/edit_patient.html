@@ -18,9 +18,9 @@
    <input type="text" name="city" size="40" value = {{patient['city']}}>
   </p>
   <p><b>Birthday:</b><br>
-   <input type="text" name="birthday" size="40" value = {{patient['date_of_birth']['$date']}}>
+   <input type="date" name="birthday" size="40" value = {{patient['$date']}}>
   </p>
- <button onclick="location.href='http://localhost:5000/';"  method="get">Edit</button>
+ <button onclick="location.href='http://localhost:5000/';"  method="get">Save</button>
  </form>
 <button onclick="location.href='http://localhost:5000/';">Back to menu</button>
  </body>
