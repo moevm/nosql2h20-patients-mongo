@@ -67,8 +67,13 @@
     </table>
     <div class="buttons">
       <button onclick="location.href='http://127.0.0.1:8080/add'">Добавить человека</button>
-      <button onclick="move_forward()">Экспорт</button>
-      <button>Импорт</button>
+      <form action="/export" method="post">
+        <button onclick="move_forward()">Экспорт</button>
+      </form>
+        <form action="/import" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+        <button>Импорт</button>
+        </form>
     </div>
   </div>
 </div>

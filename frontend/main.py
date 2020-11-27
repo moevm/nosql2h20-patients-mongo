@@ -1,16 +1,36 @@
-from flask import Flask, render_template, send_file, request, redirect
+from flask import Flask, render_template, send_file, request, redirect, send_from_directory
 import requests
 import matplotlib.pyplot as plt
 import os
 import time
 from datetime import datetime
-
+import json
 app = Flask(__name__)
 
 PROTOCOL = 'http'
 HOST = 'localhost'
 PORT = '5000'
 URL = PROTOCOL + '://' + HOST + ':' + PORT
+
+
+@app.route('/export', methods=['POST', 'GET'])
+def export_json():
+    json_f = requests.get('http://localhost:5000/export').json()['patients']
+    with open('static/data.json', 'w+', encoding='utf-8') as f:
+        json.dump(json_f, f, ensure_ascii=False)
+    return send_from_directory('./', 'static/data.json', as_attachment=True)
+
+
+@app.route('/import', methods=['POST', 'GET'])
+def import_json():
+    if request.method == 'GET':
+        return render_template('index.html')
+    file = request.files['file']
+    file.save(os.path.join('./static/', file.filename))
+    with open('./static/' + file.filename) as f:
+        data = json.load(f)
+    requests.post('http://localhost:5000/import', data={"patients": json.dumps(data)})
+    return redirect('/')
 
 
 @app.route("/", methods=['GET', 'POST'])
