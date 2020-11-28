@@ -84,10 +84,26 @@ def chart(tmp, time):
     dict = {}
     left = 0
     tick_label = []
+    week = []
     if request.method == 'GET':
         ans = requests.get(URL + '/patients')
         tmp_people = ans.json()['patient']
+        if tmp == 'Date':
+
+            today = datetime.today()
+            today_seconds = today.timestamp()
+            tick_label.append(datetime.strftime(datetime.fromtimestamp(today_seconds).date(),'%Y-%m-%d'))
+            for i in range(7):
+                today_seconds = today_seconds - 86400
+                tick_label.append(datetime.strftime(datetime.fromtimestamp(today_seconds).date(),'%Y-%m-%d'))
+            tick_label.reverse()
+            for n in tick_label:
+                dict.update({n:0})
         for p in tmp_people:  # in tmp_people
+            if tmp == 'Date':
+
+                if p['symptoms'][0]['date'] in tick_label:
+                        dict[p['symptoms'][0]['date']] += 1
             if tmp == 'Country':
                 if dict.get(p['country']) == None:
                     dict.update({p['country']: 1})
@@ -101,16 +117,16 @@ def chart(tmp, time):
                     tick_label.append(p['city'])
                 else:
                     dict[p['city']] += 1
+
     left = range(len(dict))
-    print(dict.keys(), dict.values(), tick_label, len(tick_label))
     plt.bar(left, dict.values(), tick_label=tick_label, width=0.8, color=['red', 'green'])
     plt.ylabel('Кол-во')
     plt.xlabel(tmp)
     plt.title('Число заболевших')
+    plt.tick_params(axis='both', which='major', labelsize=6)
     plt.savefig('./static/plot.png')
     plt.close()
     return send_file('./static/plot.png', mimetype='image/gif')
-
 
 @app.route("/statistic", methods=['GET', 'POST'])
 def statistic():
