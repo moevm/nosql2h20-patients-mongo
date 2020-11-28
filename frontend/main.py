@@ -71,6 +71,8 @@ def add():
                        "date": request.form.get('birthday')}
 
         r = requests.post(URL + '/addPatient', new_patient)
+        requests.put(URL + '/patient/'+ new_patient['phone_number']+'/symptoms',
+                       data = {'symptom': 'Zabolel', 'date': datetime.strftime(datetime.fromtimestamp(datetime.today().timestamp()).date(),'%Y-%m-%d')})
         print(r.status_code)
         if r.status_code == 302:
             return render_template('add.html')
