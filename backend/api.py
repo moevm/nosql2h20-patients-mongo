@@ -66,7 +66,7 @@ def import_json():
 
 @patients.route('/patients', methods=['GET'])
 def get_patients():
-    docs_list = list(collection.find({}))
+    docs_list = list(collection.find({}, {"_id": 0}))
     return {"patient": json.loads(json.dumps(docs_list, default=json_util.default))}
 
 
@@ -200,7 +200,8 @@ def edit_patient(phone):
         return Response(status=302)
     else:
         print(datetime.strptime(req['$date'], '%Y-%m-%d'))
-        if collection.count({req['phone_number']}) > 1:
+        pn = req['phone_number']
+        if collection.count({'phone_number': pn}) > 1:
             return Response(status=303)
         collection.update_one({'phone_number': phone}, {
             '$set': {
