@@ -8,14 +8,14 @@ import json
 app = Flask(__name__)
 
 PROTOCOL = 'http'
-HOST = 'localhost'
+HOST = 'backend'
 PORT = '5000'
 URL = PROTOCOL + '://' + HOST + ':' + PORT
 
 
 @app.route('/export', methods=['POST', 'GET'])
 def export_json():
-    json_f = requests.get('http://localhost:5000/export').json()['patients']
+    json_f = requests.get('http://backend:5000/export').json()['patients']
     with open('static/data.json', 'w+', encoding='utf-8') as f:
         json.dump(json_f, f, ensure_ascii=False)
     return send_from_directory('./', 'static/data.json', as_attachment=True)
@@ -29,7 +29,7 @@ def import_json():
     file.save(os.path.join('./static/', file.filename))
     with open('./static/' + file.filename) as f:
         data = json.load(f)
-    requests.post('http://localhost:5000/import', data={"patients": json.dumps(data)})
+    requests.post('http://backend:5000/import', data={"patients": json.dumps(data)})
     return redirect('/')
 
 
@@ -77,7 +77,7 @@ def add():
         if r.status_code == 302:
             return render_template('add.html')
         else:
-            return redirect(PROTOCOL + '://' + HOST + ':8080')
+            return redirect(PROTOCOL + '://' + 'localhost' + ':8080')
     return render_template('add.html')
 
 
@@ -170,7 +170,7 @@ def edit_card(phone_number):
         p["city"] = request.form.get('city')
         p["date_of_birth"] = request.form.get('birthday')
         requests.post(URL + '/editPatient/' + phone_number, data=p)
-        return redirect(PROTOCOL + '://' + HOST + ':8080' + '/card/' + p['phone_number'])
+        return redirect(PROTOCOL + '://' + 'localhost' + ':8080' + '/card/' + p['phone_number'])
 
     return render_template("edit_patient.html", patient=p)
 
@@ -262,4 +262,4 @@ def add_symptom(phone_number):
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(port=8080)
+    app.run(port=8080,host='0.0.0.0')

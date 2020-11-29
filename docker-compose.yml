@@ -1,15 +1,20 @@
 version: '3'
 
 services:
-  app:
+  backend:
     build: ./backend
-    container_name: app
+    container_name: backend
     ports:
-      - "8080:8080"
+      - "5000:5000"
     depends_on:
       - db
     links:
       - db
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "8080:8080" 
   db:
     image: mongo:latest
     container_name: db

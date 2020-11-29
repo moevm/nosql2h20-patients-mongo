@@ -31,4 +31,4 @@ app.register_blueprint(export)
 app.register_blueprint(imprt)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
