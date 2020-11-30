@@ -15,67 +15,80 @@
   <div class="wrapper">
     <div class="firstColumn column">
       <div class="stat">
-        <button onclick="location.href='http://localhost:8080/statistic'">Статистика</a>
+        <button onclick="location.href='http://localhost:8080/statistic'" style="width:100%">Статистика</a>
       </div>
-      <form action="" method="post">
-        <div class="search" method="get">
-          <input id="searchTxt" type="text" placeholder="Поиск" name="input_search" action="" onchange="updateTable()">
-          <select id="searcher" name="searcher" method="post" onchange="updateTable()">
-            <option value="none">Выберите атрибут</option>
-            <option value="name">ФИО</option>
-            <option value="country">Страна</option>
-            <option value="city">Город</option>
-            <option value="phone">Телефон</option>
-          </select>
-      </form>
-      <button onclick="location.href='http://localhost:8080';">Применить</button>
+      <div class="search" method="get">
+        <h3 for="filter">Поиск</h3><br>
+        <input id="searchTxt" type="text" placeholder="Поиск" name="input_search" action="" onchange="updateTableSearch()">
+        <select id="searcher" name="searcher" method="post" onchange="updateTableSearch()" style="width:100%">
+          <option value="none">Выберите атрибут</option>
+          <option value="name">ФИО</option>
+          <option value="country">Страна</option>
+          <option value="city">Город</option>
+          <option value="phone">Телефон</option>
+        </select>
+        <button onclick="updateTableSearch()" style="width:100%">Применить</button>
+      </div>
+      <div class="filter">
+        <h3 for="filter">Фильтр</h3><br>
+        <select id="filterCountry" style="width:100%">
+          <option value="none">Выберите страну</option>
+          {% for phone, name, country, city, birthday in people %}
+          <option value="{{ country }}">{{ country }}</option>
+          {% endfor %}
+        </select>
+        <select id="filterCity" style="width:100%">
+          <option value="none">Выберите город</option>
+          {% for phone, name, country, city, birthday in people %}
+          <option value="{{ city }}">{{ city }}</option>
+          {% endfor %}
+        </select>
+        <h4>Дата рождения</h4>
+        <div class="list">
+          <label class="list-item" for="start_min">От: </label>
+          <input class="list-item" type="date" id="start_min" name="birthday_min" value="1900-01-01"><br>
+        </div>
+        <div class="list">
+          <label class="list-item" for="start_max">До: </label>
+          <input class="list-item" type="date" id="start_max" name="birthday_max" value="2020-12-31"><br>
+        </div>
+        <button style="width:100%" onclick="updateTableFilter()">Применить</button>
+      </div>
     </div>
-    <div class="filter">
-      <label for="filter">Фильтр</label>
-      <select id="filter">
-        <option>Ada</option>
-        <option>Grace</option>
-        <option>Marga</option>
-        <option>Joan</option>
-      </select>
-      <input type="text" placeholder="Введите значение">
-      <button>Применить</button>
-    </div>
-  </div>
-  <div class="secondColumn column">
-    <table id="mainTable">
-      <thead>
-        <tr>
-          <th>Телефон</th>
-          <th>ФИО</th>
-          <th>Страна</th>
-          <th>Город</th>
-          <th>Дата рождения</th>
-        <tr>
-      </thead>
-      <tbody>
-        {% for phone, name, country, city, birthday in people %}
-        <tr onclick="location.href='{{ url_for('card_patient', phone_number=phone) }}';" style="cursor: pointer;">
-          <td>{{ phone }}</td>
-          <td>{{ name }}</td>
-          <td>{{ country }}</td>
-          <td>{{ city }}</td>
-          <td>{{ birthday }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <div class="buttons">
-      <button onclick="location.href='http://127.0.0.1:8080/add'">Добавить человека</button>
-      <form action="/export" method="post">
-        <button onclick="move_forward()">Экспорт</button>
-      </form>
-        <form action="/import" method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-        <button>Импорт</button>
+    <div class="secondColumn column">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th>Телефон</th>
+            <th>ФИО</th>
+            <th>Страна</th>
+            <th>Город</th>
+            <th>Дата рождения</th>
+          <tr>
+        </thead>
+        <tbody>
+          {% for phone, name, country, city, birthday in people %}
+          <tr onclick="location.href='{{ url_for('card_patient', phone_number=phone) }}';" style="cursor: pointer;">
+            <td>{{ phone }}</td>
+            <td>{{ name }}</td>
+            <td>{{ country }}</td>
+            <td>{{ city }}</td>
+            <td>{{ birthday }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="buttons">
+        <button onclick="location.href='http://127.0.0.1:8080/add'">Добавить человека</button>
+        <form action="/export" method="post">
+          <button onclick="move_forward()">Экспорт</button>
         </form>
+        <form action="/import" method="post" enctype="multipart/form-data">
+          <input type="file" name="file">
+          <button>Импорт</button>
+        </form>
+      </div>
     </div>
-  </div>
 
 </body>
 
@@ -84,7 +97,7 @@
   var people = "{{people}}".replace(/&#39;/g, "\"");
   people = JSON.parse(people);
   var attributes = ["phone", "name", "country", "city", "birthday"];
-  function updateTable() {
+  function updateTableSearch() {
     var selectSearch = document.getElementById("searcher");
     var searchAttr = selectSearch.value;
     var searchTxt = document.getElementById("searchTxt").value;
@@ -94,13 +107,13 @@
       searchAttr = "name"
     }
     table.innerHTML = "";
-    for (var i=0; i<people.length; i++) {
+    for (var i = 0; i < people.length; i++) {
       var ind = attributes.indexOf(searchAttr)
       patient = people[i];
       if (patient[ind].includes(searchTxt)) {
         var newRow = table.insertRow();
-        newRow.onclick = function(){
-          location.href='/card/'+patient[0];
+        newRow.onclick = function () {
+          location.href = '/card/' + patient[0];
         }
         newRow.style = "cursor: pointer;";
         for (var j = 0; j < 5; j++) {
@@ -116,4 +129,44 @@
       }
     }
   }
+  function updateTableFilter() {
+    var selectCountry = document.getElementById("filterCountry");
+    var filterCountry = selectCountry.value;
+    var filterCity = document.getElementById("filterCity").value;
+    var min_date = document.getElementById("start_min").value;
+    var minDate = new Date(min_date);
+    var max_date = document.getElementById("start_max").value;
+    var maxDate = new Date(min_date);
+    var table = document.getElementById("mainTable").getElementsByTagName('tbody')[0];
+    if (filterCountry == "none") {
+      filterCountry = "";
+    }
+    if (filterCity == "none") {
+      filterCity = "";
+    }
+    table.innerHTML = "";
+    for (var i = 0; i < people.length; i++) {
+      //var ind = attributes.indexOf(searchAttr)
+      patient = people[i];
+      patientBirthday = new Date(patient[4]);
+      if ((patient[2] == filterCountry | filterCountry == "")&(patient[3] == filterCity | filterCity == "") & patientBirthday.getTime() >= minDate.getTime() & patientBirthday.getTime() <= maxDate.getTime() ) {
+        var newRow = table.insertRow();
+        newRow.onclick = function () {
+          location.href = '/card/' + patient[0];
+        }
+        newRow.style = "cursor: pointer;";
+        for (var j = 0; j < 5; j++) {
+
+          // Insert a cell at the end of the row
+          var newCell = newRow.insertCell();
+
+          // Append a text node to the cell
+          var newText = document.createTextNode(patient[j]);
+          newCell.appendChild(newText);
+        }
+
+      }
+    }
+  }
+
 </script>
