@@ -17,6 +17,13 @@ html {
   line-height: 1.4;
 }
 
+.addForm{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
 /*
  * Remove text-shadow in selection highlight:
  * https://twitter.com/miketaylr/status/12228805301
@@ -281,10 +288,6 @@ textarea {
 .secondColumn{
   display: flex;
   width: 900px;
-}
-
-.stat{
-  padding: 30px 10px;
 }
 
 table {
