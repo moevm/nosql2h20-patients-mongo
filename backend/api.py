@@ -219,3 +219,4 @@ def edit_patient(phone):
 def delete_patient(phone):
     collection.delete_one({"phone_number": phone})
     return Response(status=200)
+    
