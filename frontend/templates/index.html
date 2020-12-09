@@ -10,7 +10,7 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
 </head>
 
-<body>
+<body class="addForm">
 
   <div class="wrapper">
     <div class="firstColumn column">
@@ -19,7 +19,8 @@
       </div>
       <div class="search" method="get">
         <h3 for="filter">Поиск</h3><br>
-        <input id="searchTxt" type="text" placeholder="Поиск" name="input_search" action="" onchange="updateTableSearch()">
+        <input id="searchTxt" type="text" placeholder="Поиск" name="input_search" action=""
+          onchange="updateTableSearch()" style="width: 285px;">
         <select id="searcher" name="searcher" method="post" onchange="updateTableSearch()" style="width:100%">
           <option value="none">Выберите атрибут</option>
           <option value="name">ФИО</option>
@@ -33,15 +34,16 @@
         <h3 for="filter">Фильтр</h3><br>
         <select id="filterCountry" style="width:100%">
           <option value="none">Выберите страну</option>
+          <!--
           {% for phone, name, country, city, birthday in people %}
           <option value="{{ country }}">{{ country }}</option>
-          {% endfor %}
+          {% endfor %}-->
         </select>
         <select id="filterCity" style="width:100%">
           <option value="none">Выберите город</option>
-          {% for phone, name, country, city, birthday in people %}
+          <!--{% for phone, name, country, city, birthday in people %}
           <option value="{{ city }}">{{ city }}</option>
-          {% endfor %}
+          {% endfor %}-->
         </select>
         <h4>Дата рождения</h4>
         <div class="list">
@@ -79,13 +81,13 @@
         </tbody>
       </table>
       <div class="buttons">
-        <button onclick="location.href='http://127.0.0.1:8080/add'">Добавить человека</button>
+        <button onclick="location.href='http://127.0.0.1:8080/add'" style="width:100%">Добавить человека</button>
         <form action="/export" method="post">
-          <button onclick="move_forward()">Экспорт</button>
+          <button onclick="move_forward()" style="width:100%">Экспорт</button>
         </form>
         <form action="/import" method="post" enctype="multipart/form-data">
           <input type="file" name="file">
-          <button>Импорт</button>
+          <button style="width:100%">Импорт</button>
         </form>
       </div>
     </div>
@@ -97,6 +99,40 @@
   var people = "{{people}}".replace(/&#39;/g, "\"");
   people = JSON.parse(people);
   var attributes = ["phone", "name", "country", "city", "birthday"];
+  var duplicated_countries = [];
+  var duplicated_cities = [];
+  for (var i = 0; i < people.length; i++) {
+    duplicated_countries.push(people[i][2]);
+    duplicated_cities.push(people[i][3]);
+  }
+  var uniq_countries = [...new Set(duplicated_countries)].sort();
+  var sel = document.getElementById('filterCountry');
+  for (var i = 0; i < uniq_countries.length; i++) {
+    var opt = document.createElement('option');
+
+    // create text node to add to option element (opt)
+    opt.appendChild(document.createTextNode(uniq_countries[i]));
+
+    // set value property of opt
+    opt.value = uniq_countries[i];
+
+    // add opt to end of select box (sel)
+    sel.appendChild(opt);
+  }
+  var uniq_cities = [...new Set(duplicated_cities)].sort();
+  sel = document.getElementById('filterCity');
+  for (var i = 0; i < uniq_cities.length; i++) {
+    var opt = document.createElement('option');
+
+    // create text node to add to option element (opt)
+    opt.appendChild(document.createTextNode(uniq_cities[i]));
+
+    // set value property of opt
+    opt.value = uniq_cities[i];
+
+    // add opt to end of select box (sel)
+    sel.appendChild(opt);
+  }
   function updateTableSearch() {
     var selectSearch = document.getElementById("searcher");
     var searchAttr = selectSearch.value;
@@ -110,7 +146,7 @@
     for (var i = 0; i < people.length; i++) {
       var ind = attributes.indexOf(searchAttr)
       patient = people[i];
-      if (patient[ind].includes(searchTxt)) {
+      if (patient[ind].toLowerCase().includes(searchTxt.toLowerCase())) {
         var newRow = table.insertRow();
         newRow.onclick = function () {
           location.href = '/card/' + patient[0];
@@ -149,7 +185,7 @@
       //var ind = attributes.indexOf(searchAttr)
       patient = people[i];
       patientBirthday = new Date(patient[4]);
-      if ((patient[2] == filterCountry | filterCountry == "")&(patient[3] == filterCity | filterCity == "") & patientBirthday.getTime() >= minDate.getTime() & patientBirthday.getTime() <= maxDate.getTime() ) {
+      if ((patient[2] == filterCountry | filterCountry == "") & (patient[3] == filterCity | filterCity == "") & patientBirthday.getTime() >= minDate.getTime() & patientBirthday.getTime() <= maxDate.getTime()) {
         var newRow = table.insertRow();
         newRow.onclick = function () {
           location.href = '/card/' + patient[0];
