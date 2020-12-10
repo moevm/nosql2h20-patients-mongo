@@ -4,11 +4,14 @@ import json
 from datetime import datetime
 from entities import Patient, Disease
 
-HOST = 'db'
+HOST = 'localhost'
+if len(sys.argv) > 2:
+    HOST = sys.argv[2]
 PORT = 27017
 client = MongoClient(host=HOST, port=PORT)
 db = client['patients']
 collection = db['patient']
+
 
 def init():
     f = open('init.json', 'r')
@@ -27,8 +30,9 @@ def init():
             for c in tmp['contacts']:
                 patient.contacts.append(c)
             for c in tmp['symptoms']:
-                patient.symptoms.append({'symptom':c['symptom'], 'date':c['date']})
+                patient.symptoms.append({'symptom': c['symptom'], 'date': c['date']})
             print(patient.__dict__)
             collection.insert_one(patient.__dict__)
+
 
 init()

@@ -5,17 +5,21 @@ import os
 import time
 from datetime import datetime
 import json
-app = Flask(__name__)
+import sys
 
+app = Flask(__name__)
+app.url_map.strict_slashes = False
 PROTOCOL = 'http'
-HOST = 'backend'
+HOST = 'localhost'
+if len(sys.argv) > 2:
+    HOST = sys.argv[2]
 PORT = '5000'
 URL = PROTOCOL + '://' + HOST + ':' + PORT
 
 
 @app.route('/export', methods=['POST', 'GET'])
 def export_json():
-    json_f = requests.get('http://backend:5000/export').json()['patients']
+    json_f = requests.get('http://' + HOST + ':5000/export').json()['patients']
     with open('static/data.json', 'w+', encoding='utf-8') as f:
         json.dump(json_f, f, ensure_ascii=False)
     return send_from_directory('./', 'static/data.json', as_attachment=True)
@@ -29,7 +33,7 @@ def import_json():
     file.save(os.path.join('./static/', file.filename))
     with open('./static/' + file.filename) as f:
         data = json.load(f)
-    requests.post('http://backend:5000/import', data={"patients": json.dumps(data)})
+    requests.post('http://' + HOST + ':5000/import', data={"patients": json.dumps(data)})
     return redirect('/')
 
 
@@ -71,8 +75,10 @@ def add():
                        "date": request.form.get('birthday')}
 
         r = requests.post(URL + '/addPatient', new_patient)
-        requests.put(URL + '/patient/'+ new_patient['phone_number']+'/symptoms',
-                       data = {'symptom': 'Zabolel', 'date': datetime.strftime(datetime.fromtimestamp(datetime.today().timestamp()).date(),'%Y-%m-%d')})
+        requests.put(URL + '/patient/' + new_patient['phone_number'] + '/symptoms',
+                     data={'symptom': 'Zabolel',
+                           'date': datetime.strftime(datetime.fromtimestamp(datetime.today().timestamp()).date(),
+                                                     '%Y-%m-%d')})
         print(r.status_code)
         if r.status_code == 302:
             return render_template('add.html')
@@ -84,9 +90,7 @@ def add():
 @app.route("/chart/<tmp>/<time>", methods=['GET', 'POST'])
 def chart(tmp, time):
     dict = {}
-    left = 0
     tick_label = []
-    week = []
     if request.method == 'GET':
         ans = requests.get(URL + '/patients')
         tmp_people = ans.json()['patient']
@@ -94,27 +98,27 @@ def chart(tmp, time):
 
             today = datetime.today()
             today_seconds = today.timestamp()
-            tick_label.append(datetime.strftime(datetime.fromtimestamp(today_seconds).date(),'%Y-%m-%d'))
+            tick_label.append(datetime.strftime(datetime.fromtimestamp(today_seconds).date(), '%Y-%m-%d'))
             for i in range(7):
                 today_seconds = today_seconds - 86400
-                tick_label.append(datetime.strftime(datetime.fromtimestamp(today_seconds).date(),'%Y-%m-%d'))
+                tick_label.append(datetime.strftime(datetime.fromtimestamp(today_seconds).date(), '%Y-%m-%d'))
             tick_label.reverse()
             for n in tick_label:
-                dict.update({n:0})
+                dict.update({n: 0})
         for p in tmp_people:  # in tmp_people
             if tmp == 'Date':
 
                 if p['symptoms'][0]['date'] in tick_label:
-                        dict[p['symptoms'][0]['date']] += 1
+                    dict[p['symptoms'][0]['date']] += 1
             if tmp == 'Country':
-                if dict.get(p['country']) == None:
+                if dict.get(p['country']) is None:
                     dict.update({p['country']: 1})
                     tick_label.append(p['country'])
                 else:
                     dict[p['country']] += 1
 
             if tmp == 'City':
-                if dict.get(p['city']) == None:
+                if dict.get(p['city']) is None:
                     dict.update({p['city']: 1})
                     tick_label.append(p['city'])
                 else:
@@ -130,6 +134,7 @@ def chart(tmp, time):
     plt.close()
     return send_file('./static/plot.png', mimetype='image/gif')
 
+
 @app.route("/statistic", methods=['GET', 'POST'])
 def statistic():
     tmp = 'Country'
@@ -137,7 +142,6 @@ def statistic():
         result = request.args
         for _, item in result.items():
             tmp = item
-    new_time = time.time()
     return render_template("statistic.html", tmp=tmp, time=str(time.time()))
 
 
@@ -153,7 +157,6 @@ def card_patient(phone_number):
 @app.route("/card/<phone_number>/edit", methods=['GET', 'POST'])
 def edit_card(phone_number):
     p = requests.get(URL + '/patient/' + phone_number)
-    old_card = p
     p = p.json()
     p['$date'] = datetime.fromtimestamp(
         int((p['date_of_birth']['$date'])) / 1000).strftime('%Y-%m-%d')
@@ -161,9 +164,7 @@ def edit_card(phone_number):
         new_card = {"phone_number": request.form.get('phone'), "name": request.form.get('name'),
                     "country": request.form.get('country'), "city": request.form.get('city')}
         new_card.update({'date': {'$date': request.form.get('birthday')}})
-
         # request to edit card ???
-
         p['phone_number'] = request.form.get('phone')
         p["name"] = request.form.get('name')
         p["country"] = request.form.get('country')
@@ -198,8 +199,6 @@ def contacts(phone_number):
 
 @app.route("/card/<phone_number>/contacts/<index>", methods=['GET', 'POST'])
 def contact_edit(phone_number, index):
-    new_p = None
-    p = requests.get(URL + '/patients/' + phone_number)
     value = request.form.get('phone')
     requests.post(URL + '/patient/' + phone_number + '/contacts', {'index': index, 'value': value})
     new_p = requests.get(URL + '/patient/' + phone_number)
@@ -223,9 +222,10 @@ def diseases(phone_number):
 
 @app.route("/card/<phone_number>/diseases/<index>", methods=['GET', 'POST'])
 def disease_edit(phone_number, index):
+    dis = request.form.get('disease')
     requests.post(URL + '/patient/' + phone_number + '/diseases',
                   {'index': index, 'value': request.form.get('disease')})
-    return render_template("edit_disease.html", phone_number=phone_number)
+    return render_template("edit_disease.html", phone_number=phone_number, disease=request.form.get('disease'))
 
 
 @app.route("/card/<phone_number>/diseases/add", methods=['GET', 'POST', "PUT"])
@@ -262,4 +262,7 @@ def add_symptom(phone_number):
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(port=8080,host='0.0.0.0')
+    HOST = 'localhost'
+    if len(sys.argv) > 1:
+        HOST = sys.argv[1]
+    app.run(port=8080, host=HOST)
