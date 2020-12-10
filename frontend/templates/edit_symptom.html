@@ -11,7 +11,7 @@
   <p><b>Date:</b><br>
    <input type="text" name="date" size="40" value = {{old_symp['date']}}>
   </p>
- <button onclick="location.href='http://localhost:8080/card/{{phone_number}}/dynamic';"  method="get">Edit</button>
+ <button onclick=onclick="location.href='{{ url_for('symptom_edit', phone_number=phone_number, index = index) }}';" method="get">Edit</button>
  </form>
 <button onclick="location.href='http://localhost:8080/';">Back to menu</button>
  </body>
