@@ -244,12 +244,14 @@ def dynamic(phone_number):
 
 @app.route("/card/<phone_number>/dynamic/<index>", methods=['GET', 'POST'])
 def symptom_edit(phone_number, index):
-    old_symp = requests.get(URL + '/patient/' + phone_number + '/symptoms').json()
-    old_symp = old_symp['symptoms'][int(index)]
-    requests.post(URL + '/patient/' + phone_number + '/symptoms',
+    if request.method == 'POST':
+        requests.post(URL + '/patient/' + phone_number + '/symptoms',
                   json={'index': index, 'value': {'symptom': request.form.get('symptom'),
                                                   'date': request.form.get('date')}})
-    return render_template("edit_symptom.html", phone_number=phone_number, old_symp=old_symp)
+    old_symp = requests.get(URL + '/patient/' + phone_number + '/symptoms').json()
+    old_symp = old_symp['symptoms'][int(index)]
+    
+    return render_template("edit_symptom.html", phone_number=phone_number, old_symp=old_symp, index = index)
 
 
 @app.route("/card/<phone_number>/dynamic/add", methods=['GET', 'POST', "PUT"])
