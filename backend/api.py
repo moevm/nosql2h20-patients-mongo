@@ -1,14 +1,10 @@
-import json
-from datetime import datetime
-from bson import json_util
-from flask import Blueprint, request, Response, url_for, render_template
-from pymongo import *
-from werkzeug.utils import redirect
 import requests
+from bson import json_util
+from flask import Blueprint, request, Response
+from pymongo import *
+
 from db import *
 from entities import Disease, Patient
-from flask import send_file, send_from_directory, safe_join, abort
-import os
 
 patients = Blueprint(name='patients', import_name=__name__)
 
@@ -35,6 +31,9 @@ patient_symptoms_edit = Blueprint(name='patient_symptoms_edit', import_name=__na
 
 export = Blueprint(name='export', import_name=__name__)
 imprt = Blueprint(name='import', import_name=__name__)
+HOST = 'localhost'
+if len(sys.argv) > 1:
+    HOST = sys.argv[1]
 
 
 @export.route('/export', methods=['POST', 'GET'])
@@ -50,17 +49,17 @@ def import_json():
     data = json.loads(data['patients'])
     for tmp in data:
         tmp['date'] = datetime.fromtimestamp(int((tmp['date_of_birth']['$date'])) / 1000).strftime('%Y-%m-%d')
-        r = requests.post('http://localhost:5000/addPatient', tmp)
+        r = requests.post('http://'+HOST+':5000/addPatient', tmp)
         if r.status_code != 200:
             continue
         for c in tmp['contacts']:
             c = {'contact': c}
-            requests.put('http://localhost:5000/patient/' + tmp['phone_number'] + '/contacts', c)
+            requests.put('http://'+HOST+':5000/patient/' + tmp['phone_number'] + '/contacts', c)
         for c in tmp['diseases']:
             c = {'disease': c}
-            requests.put('http://localhost:5000/patient/' + tmp['phone_number'] + '/diseases', c)
+            requests.put('http://'+HOST+':5000/patient/' + tmp['phone_number'] + '/diseases', c)
         for c in tmp['symptoms']:
-            requests.put('http://localhost:5000/patient/' + tmp['phone_number'] + '/symptoms', c)
+            requests.put('http://'+HOST+':5000/patient/' + tmp['phone_number'] + '/symptoms', c)
     return Response(status=200)
 
 
@@ -219,4 +218,3 @@ def edit_patient(phone):
 def delete_patient(phone):
     collection.delete_one({"phone_number": phone})
     return Response(status=200)
-    

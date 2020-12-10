@@ -18,4 +18,4 @@ RUN pip install -r /app/requirements.txt
 WORKDIR /app/
 COPY . .
 
-CMD ["python", "./main.py"]
+CMD ["python", "./main.py", "0.0.0.0", "backend"]
