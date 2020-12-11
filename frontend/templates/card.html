@@ -3,44 +3,61 @@
 <meta charset="utf-8">
 
 <head>
-  <title>Patient card</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/table.css') }}" />
+	<title>Patient card</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
 
-<body>
-  <div class="wrapper" style="display: flex; justify-content: center; height: 100vh; align-items: center; flex-direction: column;">
-  <table>
-    <tbody>
-        <tr>
-            <td>Phone</td> <td>{{ patient['phone_number']}}</td>
-	</tr>
-	<tr>
-            <td>Name</td> <td>{{ patient['name']}}</td>
-	</tr>
-	<tr>
-            <td>Country</td> <td>{{ patient['country']}}</td>
-	</tr>
-	<tr>
-	    <td>City</td> <td>{{ patient['city'] }}</td>
-	</tr>
-	<tr>
-            <td>Birthday</td> <td>{{ patient['date_of_birth']['$date'] }}</td>
-        </tr>
-    </tbody>
-    </table>
-	<div style="display: flex;padding-top:10px">
-	
-	<div style="padding:10px">
-		<button onclick="location.href='http://localhost:8080/card/{{patient['phone_number']}}/dynamic';">Dynamic</button>
-		<button onclick="location.href='http://localhost:8080/card/{{patient['phone_number']}}/diseases';">Diseases</button>
+<body class="addForm">
+	<div class="wrapper"
+		style="display: flex; justify-content: center; height: 100vh; align-items: center; flex-direction: column;width: 50%;">
+		<table class="table table-bordered table-sm">
+			<tbody>
+				<tr>
+					<th scope="row">Телефон</td>
+					<td>{{ patient['phone_number']}}</td>
+				</tr>
+				<tr>
+					<th scope="row">ФИО</td>
+					<td>{{ patient['name']}}</td>
+				</tr>
+				<tr>
+					<th scope="row">Страна</td>
+					<td>{{ patient['country']}}</td>
+				</tr>
+				<tr>
+					<th scope="row">Город</td>
+					<td>{{ patient['city'] }}</td>
+				</tr>
+				<tr>
+					<th scope="row">Дата рождения</td>
+					<td>{{ patient['date_of_birth']['$date'] }}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="row">
+
+			<div class="col-sm" style="padding:10px">
+				<button class="btn btn-secondary"
+					onclick="location.href='http://localhost:8080//card/{{patient['phone_number']}}/dynamic';">Динамика</button>
+				<button class="btn btn-secondary"
+					onclick="location.href='http://localhost:8080/card//{{patient['phone_number']}}/diseases';">Болезни</button>
+			</div>
+			<div class="col-sm" style="padding:10px">
+				<button class="btn btn-secondary"
+					onclick="location.href='http://localhost:8080//card/{{patient['phone_number']}}/contacts';">Контакты</button>
+				<button class="btn btn-secondary"
+					onclick="location.href='http://localhost:8080/card/{{patient['phone_number']}}/edit';">Изменить</button>
+			</div>
+
+		</div>
+		<div class="row">
+			<button class="btn btn-secondary" onclick="location.href='http://localhost:8080/';">На главную</button>
+		</div>
 	</div>
-	<div style="padding:10px">
-		<button onclick="location.href='http://localhost:8080/card/{{patient['phone_number']}}/contacts';">Contacts</button>
-		<button onclick="location.href='http://localhost:8080/card/{{patient['phone_number']}}/edit';">Edit</button>
-	</div>
-	</div>
-  </div>
 
 </body>
