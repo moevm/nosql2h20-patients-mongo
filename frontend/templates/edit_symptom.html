@@ -1,18 +1,58 @@
 <html>
- <head>
-  <title>EDIT CONTSCTS</title>
- </head>
- <body>
 
- <form name="test" method="post" action=""}>
-  <p><b>Symptom:</b><br>
-   <input type="text" name="symptom" size="40" value = {{old_symp['symptom']}}>
-  </p>
-  <p><b>Date:</b><br>
-   <input type="text" name="date" size="40" value = {{old_symp['date']}}>
-  </p>
- <button onclick=onclick="location.href='{{ url_for('symptom_edit', phone_number=phone_number, index = index) }}';" method="get">Edit</button>
- </form>
-<button onclick="location.href='http://localhost:8080/';">Back to menu</button>
- </body>
+<head>
+    <title>EDIT CONTSCTS</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+</head>
+
+<body class="addForm">
+
+    <form name="test" method="post" class="px-4 py-3">
+        <div class="form-group">
+            <p><b>Симптом:</b><br>
+                <input type="text" name="symptom" value={{old_symp['symptom']}}>
+            </p>
+        </div>
+        <div class="form-group">
+            <p><b>Дата:</b><br>
+                <input type="date" name="date" value={{old_symp['date']}}>
+            </p>
+        </div>
+        <div class="row align-self-center">
+            <div class="col-sm-6">
+                <button class="btn btn-success"
+                    onclick="location.href='http://localhost:8080/card/{{phone_number}}/dynamic';"
+                    method="get">Edit</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-danger" onclick="deleteSymptom()">Удалить</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-secondary"
+                onclick="location.href='http://localhost:8080/card/{{phone_number}}';">Назад</button>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    function deleteSymptom() {
+        $.ajax({
+            type: "DELETE",
+            url: window.location,
+            success: function () {
+                window.location.href = 'http://localhost:8080/card/{{phone_number}}/dynamic';
+                alert("Симптом удален!");
+            }
+        });
+    }
+</script>
+
 </html>
