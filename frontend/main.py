@@ -3,7 +3,7 @@ import requests
 import matplotlib.pyplot as plt
 import os
 import time
-from datetime import datetime
+from datetime import datetime, date
 import json
 import sys
 
@@ -87,6 +87,13 @@ def add():
     return render_template('add.html')
 
 
+def age_from_date(date_of_birth):
+    tmp_date = datetime.fromtimestamp(int(date_of_birth) / 1000).strftime('%Y-%m-%d')
+    tmp_date = datetime.strptime(tmp_date, '%Y-%m-%d')
+    today = date.today()
+    return today.year - tmp_date.year - ((today.month, today.day) < (tmp_date.month, tmp_date.day))
+
+
 @app.route("/chart/<tmp>/<time>", methods=['GET', 'POST'])
 def chart(tmp, time):
     dict = {}
@@ -95,7 +102,6 @@ def chart(tmp, time):
         ans = requests.get(URL + '/patients')
         tmp_people = ans.json()['patient']
         if tmp == 'Date':
-
             today = datetime.today()
             today_seconds = today.timestamp()
             tick_label.append(datetime.strftime(datetime.fromtimestamp(today_seconds).date(), '%Y-%m-%d'))
@@ -123,6 +129,13 @@ def chart(tmp, time):
                     tick_label.append(p['city'])
                 else:
                     dict[p['city']] += 1
+            if tmp == 'Age':
+                age = age_from_date(p['date_of_birth']['$date'])
+                if dict.get(age) is None:
+                    dict.update({age: 1})
+                    tick_label.append(age)
+                else:
+                    dict[age] += 1
 
     left = range(len(dict))
     plt.bar(left, dict.values(), tick_label=tick_label, width=0.8, color=['red', 'green'])
@@ -154,8 +167,11 @@ def card_patient(phone_number):
     return render_template("card.html", patient=patient)
 
 
-@app.route("/card/<phone_number>/edit", methods=['GET', 'POST'])
+@app.route("/card/<phone_number>/edit", methods=['GET', 'POST', 'DELETE'])
 def edit_card(phone_number):
+    if request.method == 'DELETE':
+        p = requests.delete(URL+'/patient/'+phone_number)
+        return Response(status=200)
     p = requests.get(URL + '/patient/' + phone_number)
     p = p.json()
     p['$date'] = datetime.fromtimestamp(

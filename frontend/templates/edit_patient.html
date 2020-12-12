@@ -1,6 +1,12 @@
 <html>
  <head>
   <title>EDIT</title>
+         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
  </head>
  <body>
 
@@ -22,6 +28,19 @@
   </p>
  <button onclick="location.href='http://localhost:8080/';"  method="get">Save</button>
  </form>
-<button onclick="location.href='http://localhost:8080/';">Back to menu</button>
+ <button onclick="location.href='http://localhost:8080/';">Back to menu</button>
+ <button onclick="deletePerson()">Удалить</button>
  </body>
+<script type="text/javascript">
+    function deletePerson() {
+        $.ajax({
+            type: "DELETE",
+            url: window.location,
+            success: function () {
+                window.location.href = 'http://localhost:8080/';
+                alert("Пациент удален!");
+            }
+        });
+    }
+</script>
 </html>
