@@ -10,9 +10,9 @@
         integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 </head>
 
-<body class="addForm">
+<body class="addForm" style="height: 100vh;">
 
-    <form name="test" method="post" class="px-4 py-3">
+    <form id="editSymptom" method="post" class="px-4 py-3">
         <div class="form-group">
             <p><b>Симптом:</b><br>
                 <input type="text" name="symptom" value={{old_symp['symptom']}}>
@@ -23,15 +23,13 @@
                 <input type="date" name="date" value={{old_symp['date']}}>
             </p>
         </div>
-        <div class="row align-self-center">
-            <div class="col-sm-6">
-                <button class="btn btn-success"
-                    onclick="location.href='http://localhost:8080/card/{{phone_number}}/dynamic';"
-                    method="get">Edit</button>
-            </div>
-        </div>
     </form>
     <div class="row">
+        <div class="col">
+            <button class="btn btn-success" form="editSymptom"
+                onclick="location.href='http://localhost:8080/card/{{phone_number}}/dynamic';"
+                method="get">Edit</button>
+        </div>
         <div class="col">
             <button type="button" class="btn btn-danger" onclick="deleteSymptom()">Удалить</button>
         </div>
