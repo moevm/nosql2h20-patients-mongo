@@ -6,27 +6,37 @@
   <title>Contacts</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/table.css') }}"/>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
 </head>
 
-<body>
-  <div class="wrapper" style="display: flex; justify-content: center; height: 100vh; align-items: center; flex-direction: column;">
-  <table>
-     <tbody>
+<body class="addForm" style="height: 100vh;">
+  <div class="row">
+    <table class="table table-hover">
+      <tbody>
         {%for contact in contacts %}
-        <tr onclick="location.href='{{ url_for('contact_edit', phone_number = phone_number,  index = loop.index-1) }}';">
-            <td>{{ contact}}</td>
+        <tr
+          onclick="location.href='{{ url_for('contact_edit', phone_number = phone_number,  index = loop.index-1) }}';">
+          <td>{{ contact}}</td>
         </tr>
         {% endfor %}
-    </tbody>
-  </table>
-	<div style="display: flex;padding-top:10px">
-	
-	<div style="padding:10px">
-		<button onclick="location.href='{{ url_for('card_patient', phone_number=phone_number) }}';">Back</button>
-		<button onclick="location.href='{{ url_for('add_contact', phone_number=phone_number) }}';">Add</button>
+      </tbody>
+    </table>
+  </div>
 
-	</div>
+  <div class="row">
+    <div class="col">
+      <button class="btn btn-success"
+        onclick="location.href='{{ url_for('add_contact', phone_number=phone_number) }}';">Добавить</button>
+    </div>
+    <div class="col">
+      <button class="btn btn-secondary"
+        onclick="location.href='{{ url_for('card_patient', phone_number=phone_number) }}';">Назад</button>
+    </div>
   </div>
 
 </body>
