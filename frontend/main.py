@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_file, request, redirect, send_from_directory
+from flask import Flask, render_template, send_file, request, redirect, send_from_directory, Response
 import requests
 import matplotlib.pyplot as plt
 import os
@@ -197,8 +197,12 @@ def contacts(phone_number):
     return render_template("contacts.html", contacts=names_of_contacts, phone_number=phone_number)
 
 
-@app.route("/card/<phone_number>/contacts/<index>", methods=['GET', 'POST'])
+@app.route("/card/<phone_number>/contacts/<index>", methods=['GET', 'POST', 'DELETE'])
 def contact_edit(phone_number, index):
+    if request.method == 'DELETE':
+        requests.delete(URL + '/patient/' + phone_number + '/contacts',
+                  data={'index': index})
+        return Response(status=200)
     value = request.form.get('phone')
     requests.post(URL + '/patient/' + phone_number + '/contacts', {'index': index, 'value': value})
     new_p = requests.get(URL + '/patient/' + phone_number)
@@ -220,8 +224,12 @@ def diseases(phone_number):
     return render_template('diseases.html', diseases=diseases, phone_number=phone_number)
 
 
-@app.route("/card/<phone_number>/diseases/<index>", methods=['GET', 'POST'])
+@app.route("/card/<phone_number>/diseases/<index>", methods=['GET', 'POST', 'DELETE'])
 def disease_edit(phone_number, index):
+    if request.method == 'DELETE':
+        requests.delete(URL + '/patient/' + phone_number + '/diseases',
+                  data={'index': index})
+        return Response(status=200)
     dis = request.form.get('disease')
     requests.post(URL + '/patient/' + phone_number + '/diseases',
                   {'index': index, 'value': request.form.get('disease')})
@@ -242,8 +250,12 @@ def dynamic(phone_number):
     return render_template('dynamic.html', symptoms=diseases['symptoms'], phone_number=phone_number)
 
 
-@app.route("/card/<phone_number>/dynamic/<index>", methods=['GET', 'POST'])
+@app.route("/card/<phone_number>/dynamic/<index>", methods=['GET', 'POST', 'DELETE'])
 def symptom_edit(phone_number, index):
+    if request.method == 'DELETE':
+        requests.delete(URL + '/patient/' + phone_number + '/symptoms',
+                  data={'index': index})
+        return Response(status=200)
     if request.method == 'POST':
         requests.post(URL + '/patient/' + phone_number + '/symptoms',
                   json={'index': index, 'value': {'symptom': request.form.get('symptom'),
