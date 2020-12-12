@@ -1,15 +1,47 @@
 <html>
- <head>
-  <title>Edit disease</title>
- </head>
- <body>
 
- <form name="test" method="post" action="">
-  <p><b>Disease:</b><br>
-   <input type="text" name="disease" size="40" value={{dis}}>
-  </p>
- <button onclick="location.href='http://localhost:8080/';">Edit</button>
- </form>
-<button onclick="location.href='http://localhost:8080/card/{{phone_number}}/diseases';">Back to menu</button>
- </body>
+<head>
+    <title>Edit disease</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+</head>
+
+<body class="addForm" style="height: 100vh;">
+
+    <form id="editDisease" class="form" method="post" action="">
+        <p><b>Болезнь:</b><br>
+            <input type="text" name="disease" size="40">
+        </p>
+    </form>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-success" onclick="location.href='http://localhost:8080/';">Изменить</button>
+        </div>
+        <div class="col">
+            <button type="button" class="btn btn-danger" onclick="deleteDisease()">Удалить</button>
+        </div>
+        <div class="col">
+            <button class="btn btn-secondary"
+                onclick="location.href='http://localhost:8080/card/{{phone_number}}/diseases';">Назад</button>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    function deleteDisease() {
+        $.ajax({
+            type: "DELETE",
+            url: window.location,
+            success: function () {
+                window.location.href = 'http://localhost:8080/card/{{phone_number}}/diseases';
+                alert("Болезнь удалена!");
+            }
+        });
+    }
+</script>
+
 </html>
