@@ -241,7 +241,7 @@ def add_disease(phone_number):
     if request.method == 'POST':
         disease = {'disease': request.form.get('disease')}
         requests.put(URL + '/patient/' + phone_number + '/diseases', disease)
-    return render_template("edit_disease.html", phone_number=phone_number)
+    return render_template("add_disease.html", phone_number=phone_number)
 
 
 @app.route("/card/<phone_number>/dynamic", methods=['GET', 'POST'])
