@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Edit disease</title>
+    <title>Add disease</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}" />
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -11,38 +11,22 @@
 </head>
 
 <body class="addForm" style="height: 100vh;">
-
-    <form id="editDisease" class="form" method="post" action="">
+    <form class="form" id="addDisease" method="post" action="" }>
         <p><b>Болезнь:</b><br>
             <input type="text" name="disease" size="40">
         </p>
     </form>
     <div class="row">
         <div class="col">
-            <button class="btn btn-success" form="editDisease"
-                onclick="location.href='http://localhost:8080/';">Изменить</button>
-        </div>
-        <div class="col">
-            <button type="button" class="btn btn-danger" onclick="deleteDisease()">Удалить</button>
+            <button class="btn btn-success" form="addDisease"
+                onclick="location.href='http://localhost:8080/card/{{phone_number}}/diseases';"
+                method="get">Добавить</button>
         </div>
         <div class="col">
             <button class="btn btn-secondary"
                 onclick="location.href='http://localhost:8080/card/{{phone_number}}/diseases';">Назад</button>
         </div>
     </div>
-
 </body>
-<script type="text/javascript">
-    function deleteDisease() {
-        $.ajax({
-            type: "DELETE",
-            url: window.location,
-            success: function () {
-                window.location.href = 'http://localhost:8080/card/{{phone_number}}/diseases';
-                alert("Болезнь удалена!");
-            }
-        });
-    }
-</script>
 
 </html>

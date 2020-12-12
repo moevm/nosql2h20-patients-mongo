@@ -40,23 +40,29 @@
 			</tbody>
 		</table>
 		<div class="row">
-
-			<div class="col-sm" style="padding:10px">
+			<div class="col" style="padding:10px">
 				<button class="btn btn-secondary"
 					onclick="location.href='http://localhost:8080//card/{{patient['phone_number']}}/dynamic';">Динамика</button>
+			</div>
+			<div class="col" style="padding:10px">
+				<button class="btn btn-secondary"
+					onclick="location.href='http://localhost:8080//card/{{patient['phone_number']}}/contacts';">Контакты</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
 				<button class="btn btn-secondary"
 					onclick="location.href='http://localhost:8080/card//{{patient['phone_number']}}/diseases';">Болезни</button>
 			</div>
-			<div class="col-sm" style="padding:10px">
-				<button class="btn btn-secondary"
-					onclick="location.href='http://localhost:8080//card/{{patient['phone_number']}}/contacts';">Контакты</button>
+			<div class="col">
 				<button class="btn btn-secondary"
 					onclick="location.href='http://localhost:8080/card/{{patient['phone_number']}}/edit';">Изменить</button>
 			</div>
-
 		</div>
 		<div class="row">
-			<button class="btn btn-secondary" onclick="location.href='http://localhost:8080/';">На главную</button>
+			<div class="col" style="margin:10px;">
+				<button class="btn btn-secondary" onclick="location.href='http://localhost:8080/';">На главную</button>
+			</div>
 		</div>
 	</div>
 
