@@ -19,7 +19,8 @@ URL = PROTOCOL + '://' + HOST + ':' + PORT
 
 @app.route('/export', methods=['POST', 'GET'])
 def export_json():
-    json_f = requests.get('http://' + HOST + ':5000/export').json()['patients']
+    json_f = requests.get(URL+'/export').json()['patients']
+    print(json_f)
     with open('static/data.json', 'w+', encoding='utf-8') as f:
         json.dump(json_f, f, ensure_ascii=False)
     return send_from_directory('./', 'static/data.json', as_attachment=True)
@@ -33,7 +34,7 @@ def import_json():
     file.save(os.path.join('./static/', file.filename))
     with open('./static/' + file.filename) as f:
         data = json.load(f)
-    requests.post('http://' + HOST + ':5000/import', data={"patients": json.dumps(data)})
+    requests.post(URL+'/import', data={"patients": json.dumps(data)})
     return redirect('/')
 
 
