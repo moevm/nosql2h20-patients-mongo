@@ -85,8 +85,8 @@
         <form action="/export" method="post">
           <button onclick="move_forward()" style="width:100%">Экспорт</button>
         </form>
-        <form action="/import" method="post" enctype="multipart/form-data">
-          <input type="file" name="file">
+        <form action="/import" method="post" enctype="multipart/form-data" onsubmit="return isEmpty()">
+          <input type="file" name="file" id="file">
           <button style="width:100%">Импорт</button>
         </form>
       </div>
@@ -165,6 +165,16 @@
       }
     }
   }
+
+  function isEmpty(){
+    if( document.getElementById("file").files.length == 0 ){
+      alert("no files selected");
+      return false;
+    }
+    return true;
+  }
+
+
   function updateTableFilter() {
     var selectCountry = document.getElementById("filterCountry");
     var filterCountry = selectCountry.value;
