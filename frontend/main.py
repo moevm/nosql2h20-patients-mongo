@@ -1,3 +1,5 @@
+import operator
+
 from flask import Flask, render_template, send_file, request, redirect, send_from_directory, Response
 import requests
 import matplotlib.pyplot as plt
@@ -114,9 +116,9 @@ def chart(tmp, time):
                 dict.update({n: 0})
         for p in tmp_people:  # in tmp_people
             if tmp == 'Date':
-
-                if p['symptoms'][0]['date'] in tick_label:
-                    dict[p['symptoms'][0]['date']] += 1
+                if len(p['symptoms']) > 0:
+                    if p['symptoms'][0]['date'] in tick_label:
+                        dict[p['symptoms'][0]['date']] += 1
             if tmp == 'Country':
                 if dict.get(p['country']) is None:
                     dict.update({p['country']: 1})
@@ -137,7 +139,6 @@ def chart(tmp, time):
                     tick_label.append(age)
                 else:
                     dict[age] += 1
-
     left = range(len(dict))
     plt.bar(left, dict.values(), tick_label=tick_label, width=0.8, color=['red', 'green'])
     plt.ylabel('Кол-во')
